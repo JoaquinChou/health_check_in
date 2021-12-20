@@ -11,7 +11,7 @@ def login_and_check_in(username, password):
 
     # 休眠3-4s
     sleep(random.uniform(3, 4))
-    driver.get('https://ids.xmu.edu.cn/authserver/login?service=https://xmuxg.xmu.edu.cn/login/cas/xmu')
+    driver.get('')
 
     # 2.清空用户名框和密码框
     now_handle = driver.current_window_handle
@@ -37,8 +37,8 @@ def login_and_check_in(username, password):
         try:
             # 该处需要结合具体的网页填写x_path
             # element1 = driver.find_element_by_xpath("//*[@id='mainPage-page']/div[1]/div[3]/div[2]/div[2]/div[3]/div/div[3]")
-            # driver.execute_script("arguments[0].click();", element1)
-            driver.find_element_by_xpath("//*[contains(text(), 'Daily Health Report 健康打卡')]").click()
+            element1 = driver.find_element_by_xpath("//*[contains(text(), 'Daily Health Report 健康打卡')]")
+            driver.execute_script("arguments[0].click();", element1)
             # driver.find_element_by_link_text("Daily Health Report 健康打卡").click()
             # print(driver.window_handles)
             flag = False
@@ -82,26 +82,28 @@ def login_and_check_in(username, password):
     sleep(random.uniform(1, 2))
     # print("++++++++4", driver.window_handles)
     # 该处需要结合具体的网页填写css_selector
-    driver.find_element_by_css_selector("[class='dropdown-items']").click()
+    try:
+        driver.find_element_by_css_selector("[class='dropdown-items']").click()
+        # 11. 点击保存
+        sleep(random.uniform(1, 3))
+        # 该处需要结合具体的网页填写css_selector
+        driver.find_element_by_css_selector("[class^='form-save']").click()
 
-    # 11. 点击保存
-    sleep(random.uniform(1, 3))
-    # 该处需要结合具体的网页填写css_selector
-    driver.find_element_by_css_selector("[class^='form-save']").click()
+        # 12. 对浏览器的弹窗进行"确认"处理
+        # 新方法，切换alert
+        dialog = driver.switch_to.alert
+        # a = driver.switch_to_alert()   #  老方法，切换alert
+        # 获取弹窗上的文本
+        # print(dialog.text)
 
-    # 12. 对浏览器的弹窗进行"确认"处理
-    # 新方法，切换alert
-    dialog = driver.switch_to.alert
-    # a = driver.switch_to_alert()   #  老方法，切换alert
-    # 获取弹窗上的文本
-    # print(dialog.text)
+        # 确认，相当于点击[确定]按钮
+        sleep(random.uniform(2, 4))
+        dialog.accept()
+        # 取消，相当于点击[取消]按钮
+        # a.dismiss()
 
-    # 确认，相当于点击[确定]按钮
-    sleep(random.uniform(2, 4))
-    dialog.accept()
-    # 取消，相当于点击[取消]按钮
-    # a.dismiss()
-
-    # 13. 任务完成，关闭所有的浏览器
-    sleep(random.uniform(3, 20))
-    driver.quit()
+        # 13. 任务完成，关闭所有的浏览器
+        sleep(random.uniform(3, 20))
+        driver.quit()
+    except NoSuchElementException:
+            driver.quit()
